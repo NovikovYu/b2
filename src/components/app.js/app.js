@@ -79,14 +79,14 @@ class App extends React.Component {
 
   filter = (arr, showMode) => {
     switch (showMode) {
-    case 'all':
-      return arr
-    case 'active':
-      return arr.filter((el) => el.done === false)
-    case 'completed':
-      return arr.filter((el) => el.done === true)
-    default:
-      return arr
+      case 'all':
+        return arr
+      case 'active':
+        return arr.filter((el) => el.done === false)
+      case 'completed':
+        return arr.filter((el) => el.done === true)
+      default:
+        return arr
     }
   }
 

@@ -16,7 +16,7 @@ class NewTaskForm extends React.Component {
   }
 
   onChange = (e) => {
-    this.setState(({ taskName }) => {
+    this.setState(() => {
       return {
         taskName: e.target.value,
       }
@@ -31,7 +31,7 @@ class NewTaskForm extends React.Component {
     if (this.state.taskName) {
       addTask(this.state.taskName)
 
-      this.setState(({ taskName }) => {
+      this.setState(() => {
         return {
           taskName: '',
         }
