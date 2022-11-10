@@ -13,14 +13,31 @@ class NewTaskForm extends React.Component {
 
   state = {
     taskName: '',
+    taskTime: '',
+    taskMin: '',
+    taskSec: '',
   }
 
   onChange = (e) => {
-    this.setState(() => {
-      return {
-        taskName: e.target.value,
-      }
-    })
+    if (e.target.name === 'min') {
+      this.setState(() => {
+        return {
+          taskMin: e.target.value,
+        }
+      })
+    } else if (e.target.name === 'sec') {
+      this.setState(() => {
+        return {
+          taskSec: e.target.value,
+        }
+      })
+    } else {
+      this.setState(() => {
+        return {
+          taskName: e.target.value,
+        }
+      })
+    }
   }
 
   onSubmit = (e) => {
@@ -28,12 +45,15 @@ class NewTaskForm extends React.Component {
 
     const { addTask } = this.props
 
-    if (this.state.taskName) {
-      addTask(this.state.taskName)
+    if (this.state.taskName && this.state.taskSec) {
+      let totalTime = parseInt(this.state.taskMin * 60) + parseInt(this.state.taskSec)
+      addTask(this.state.taskName, totalTime)
 
       this.setState(() => {
         return {
           taskName: '',
+          taskMin: '',
+          taskSec: '',
         }
       })
     }
@@ -41,7 +61,7 @@ class NewTaskForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.onSubmit}>
+      <form className="new-todo-form" onSubmit={this.onSubmit}>
         <input
           className="new-todo"
           onChange={this.onChange}
@@ -49,7 +69,39 @@ class NewTaskForm extends React.Component {
           autoFocus
           value={this.state.taskName}
         ></input>
-
+        {/* <input
+          className="new-todo"
+          onChange={this.onChange}
+          placeholder="How many time it will take?"
+          autoFocus
+          type="number"
+          value={this.state.taskTime}
+          name="time"
+        ></input> */}
+        {/* <input className="new-todo-form__timer" placeholder="Min" autoFocus></input> */}
+        <input
+          className="new-todo-form__timer"
+          placeholder="Min"
+          autoFocus
+          onChange={this.onChange}
+          type="number"
+          value={this.state.taskMin}
+          name="min"
+          step="1"
+          min="0"
+        ></input>
+        <input
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          autoFocus
+          onChange={this.onChange}
+          type="number"
+          value={this.state.taskSec}
+          name="sec"
+          step="1"
+          min="1"
+          max="59"
+        ></input>
         <button className="new-todo-btn">Add task</button>
       </form>
     )

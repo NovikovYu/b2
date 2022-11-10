@@ -18,13 +18,14 @@ class App extends React.Component {
     showMode: 'all', // all, active, complited
   }
 
-  createEl(description, date = defaultTimeStamp) {
+  createEl(description, date = defaultTimeStamp, time = 150) {
     return {
       liClassName: '',
       description: description,
       created: `created ${date} ago`,
       done: false,
       id: this.startId++,
+      time: time,
     }
   }
 
@@ -41,12 +42,12 @@ class App extends React.Component {
     })
   }
 
-  addTask = (text) => {
+  addTask = (text, time) => {
     this.setState(({ toDoItems }) => {
       var timeStamp = formatDistanceToNow(new Date())
 
       return {
-        toDoItems: [...toDoItems, this.createEl(text, timeStamp)],
+        toDoItems: [...toDoItems, this.createEl(text, timeStamp, time)],
       }
     })
   }
