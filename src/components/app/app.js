@@ -1,54 +1,57 @@
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { Routes, Route } from 'react-router-dom'
 
-import SortFilter from '../sortFilter/sort-filter'
-import TicketList from '../ticket-list/ticket-list'
-import MoreTicketsBtn from '../moreTicketsBtn/moreTicketsBtn'
-import StopsFilter from '../stopsFilter/stopsFilter'
-import LoadingSpiner from '../loader/loader'
-import NoResultsBanner from '../noResultsBanner/noResultsBanner'
-import { loadMoreTickets } from '../../redux/actions'
+import { Layout } from '../layout/layout'
+import ArticleList from '../articleList/articleList'
+import ArticlePage from '../articlePage/articlePage'
+import PaginationRow from '../paginationRow/paginationRow'
+import SignUpForm from '../signUpForm/signUpForm'
+import SignInForm from '../signInForm/signInForm'
+import EditProfileForm from '../editProfileForm/editProfileForm'
+import AddArticleForm from '../addArticleForm/addArticleForm'
+import EditArticleForm from '../editArticleForm/editArticleForm'
 
-import classes from './app.module.scss'
-import Logo from './logo.png'
+import '../../styles/fix.css'
 
 const App = () => {
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(loadMoreTickets())
-  }, [])
   return (
     <>
-      <div className={classes.header}>
-        <div className={classes.container}>
-          <div className={classes['header__inner']}>
-            <a className={classes['header__link']} href="#">
-              <img className={classes['header__logo']} src={Logo} alt="логотип авиасейлс"></img>
-            </a>
-          </div>
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route
+            index
+            element={
+              <>
+                <ArticleList />
+                <PaginationRow />
+              </>
+            }
+          />
 
-      <main className={classes.content}>
-        <div className={classes.container}>
-          <div className={classes['content__inner']}>
-            <StopsFilter />
+          <Route
+            path="/articles"
+            element={
+              <>
+                <ArticleList />
+                <PaginationRow />
+              </>
+            }
+          />
 
-            <div className={classes['content__main-column']}>
-              <SortFilter />
+          <Route path="/articles/:slug" element={<ArticlePage />} />
 
-              <LoadingSpiner />
+          <Route path="/sign-up" element={<SignUpForm />} />
 
-              <NoResultsBanner />
+          <Route path="/sign-in" element={<SignInForm />} />
 
-              <TicketList />
+          <Route path="/profile" element={<EditProfileForm />} />
 
-              <MoreTicketsBtn />
-            </div>
-          </div>
-        </div>
-      </main>
+          <Route path="/add-article" element={<AddArticleForm />} />
+
+          <Route path="/articles/:slug/edit" element={<EditArticleForm />} />
+        </Route>
+      </Routes>
     </>
   )
 }
+
 export default App
