@@ -1,16 +1,4 @@
-// достаём токен из локал сторедж
-const getTokenFromLocalStorage = () => {
-  const localStorageContent = localStorage.getItem('persist:root')
-  const localStorageContentParsed = JSON.parse(localStorageContent)
-  const userReducerContentParsed = JSON.parse(localStorageContentParsed.userReducer)
-  const localStorageToken = userReducerContentParsed.token
-  let clearTocken = ''
-  if (localStorageToken) {
-    clearTocken = localStorageToken.replaceAll('"', '')
-  }
-
-  return clearTocken
-}
+import { sendRequestWithoutBody, sendRequestWithBody, getTokenFromLocalStorage } from '../requests/requests'
 
 export const loadingOn = () => ({ type: 'LOADING_ON' })
 export const loadingOff = () => ({ type: 'LOADING_OFF' })
@@ -31,14 +19,7 @@ export const loadArticles = (page = 0) => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      let response = await fetch(`https://blog.kata.academy/api/articles?limit=5&offset=${skipedArticles}`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
-        },
-      })
+      let response = await sendRequestWithoutBody('GET', `articles?limit=5&offset=${skipedArticles}`, clearTocken)
 
       if (response.ok) {
         let responseContent = await response.json()
@@ -69,14 +50,7 @@ export const loadCurrentArticle = (slug = 'title-1nv0ts') => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      let response = await fetch(`https://blog.kata.academy/api/articles/${slug}`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
-        },
-      })
+      let response = await sendRequestWithoutBody('GET', `articles/${slug}`, clearTocken)
 
       if (response.ok) {
         let responseContent = await response.json()
@@ -115,23 +89,15 @@ export const addArticle = (data) => {
     const cleanTagsArr = tagsArr.filter((el) => el)
 
     try {
-      // отправляем запрос на добавление статьи
-      let response = await fetch('https://blog.kata.academy/api/articles', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
+      let bodyContent = {
+        article: {
+          title: data.title,
+          description: data.shortDescription,
+          body: data.text,
+          tagList: cleanTagsArr,
         },
-        body: JSON.stringify({
-          article: {
-            title: data.title,
-            description: data.shortDescription,
-            body: data.text,
-            tagList: cleanTagsArr,
-          },
-        }),
-      })
+      }
+      let response = await sendRequestWithBody('POST', 'articles', clearTocken, bodyContent)
 
       dispatch(loadArticles())
 
@@ -177,23 +143,15 @@ export const editArticle = (data, slug) => {
     const cleanTagsArr = tagsArr.filter((el) => el)
 
     try {
-      // отправляем запрос на добавление статьи
-      let response = await fetch(`https://blog.kata.academy/api/articles/${slug}`, {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
+      let bodyContent = {
+        article: {
+          title: data.title,
+          description: data.shortDescription,
+          body: data.text,
+          tagList: cleanTagsArr,
         },
-        body: JSON.stringify({
-          article: {
-            title: data.title,
-            description: data.shortDescription,
-            body: data.text,
-            tagList: cleanTagsArr,
-          },
-        }),
-      })
+      }
+      let response = await sendRequestWithBody('PUT', `articles/${slug}`, clearTocken, bodyContent)
 
       dispatch(loadArticles())
 
@@ -231,15 +189,7 @@ export const deleteArticle = (slug) => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      // отправляем запрос на добавление статьи
-      let response = await fetch(`https://blog.kata.academy/api/articles/${slug}`, {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
-        },
-      })
+      let response = await sendRequestWithoutBody('DELETE', `articles/${slug}`, clearTocken)
 
       dispatch(loadArticles())
 
@@ -268,20 +218,14 @@ export const signUp = (data) => {
     dispatch(loadingOn())
 
     try {
-      let response = await fetch('https://blog.kata.academy/api/users', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      let bodyContent = {
+        user: {
+          username: data.firstName,
+          email: data.email,
+          password: data.password,
         },
-        body: JSON.stringify({
-          user: {
-            username: data.firstName,
-            email: data.email,
-            password: data.password,
-          },
-        }),
-      })
+      }
+      let response = await sendRequestWithBody('POST', 'users', '', bodyContent)
 
       if (response.ok) {
         let responseContent = await response.json()
@@ -316,14 +260,7 @@ export const likeAnArticle = (data) => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      let response = await fetch(`https://blog.kata.academy/api/articles/${data}/favorite`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
-        },
-      })
+      let response = await sendRequestWithoutBody('POST', `articles/${data}/favorite`, clearTocken)
 
       if (response.ok) {
         dispatch(loadArticles())
@@ -353,14 +290,7 @@ export const unLikeAnArticle = (data) => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      let response = await fetch(`https://blog.kata.academy/api/articles/${data}/favorite`, {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
-        },
-      })
+      let response = await sendRequestWithoutBody('DELETE', `articles/${data}/favorite`, clearTocken)
 
       if (response.ok) {
         dispatch(loadArticles())
@@ -392,22 +322,15 @@ export const editPropfile = (data) => {
     let clearTocken = getTokenFromLocalStorage()
 
     try {
-      let response = await fetch('https://blog.kata.academy/api/user', {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${clearTocken}`,
-          'Content-Type': 'application/json',
+      let bodyContent = {
+        user: {
+          username: data.firstName,
+          email: data.email,
+          password: data.password,
+          image: data.avatar,
         },
-        body: JSON.stringify({
-          user: {
-            username: data.firstName,
-            email: data.email,
-            password: data.password,
-            image: data.avatar,
-          },
-        }),
-      })
+      }
+      let response = await sendRequestWithBody('PUT', 'user', clearTocken, bodyContent)
 
       if (response.ok) {
         let responseContent = await response.json()
@@ -445,19 +368,13 @@ export const signIn = (data) => {
     dispatch(loadingOn())
 
     try {
-      let response = await fetch('https://blog.kata.academy/api/users/login', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      let bodyContent = {
+        user: {
+          email: data.email,
+          password: data.password,
         },
-        body: JSON.stringify({
-          user: {
-            email: data.email,
-            password: data.password,
-          },
-        }),
-      })
+      }
+      let response = await sendRequestWithBody('POST', 'users/login', '', bodyContent)
 
       if (response.ok) {
         let responseContent = await response.json()

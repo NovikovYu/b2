@@ -9,14 +9,15 @@ import SignInForm from '../signInForm/signInForm'
 import EditProfileForm from '../editProfileForm/editProfileForm'
 import AddArticleForm from '../addArticleForm/addArticleForm'
 import EditArticleForm from '../editArticleForm/editArticleForm'
-
 import '../../styles/fix.css'
+import pathes from '../pathes/pathes'
 
 const App = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        {/* <Route path="/" element={<Layout />}> */}
+        <Route path={pathes.main} element={<Layout />}>
           <Route
             index
             element={
@@ -28,7 +29,7 @@ const App = () => {
           />
 
           <Route
-            path="/articles"
+            path={pathes.articles}
             element={
               <>
                 <ArticleList />
@@ -37,17 +38,17 @@ const App = () => {
             }
           />
 
-          <Route path="/articles/:slug" element={<ArticlePage />} />
+          <Route path={pathes.article} element={<ArticlePage />} />
 
-          <Route path="/sign-up" element={<SignUpForm />} />
+          <Route path={pathes.join} element={<SignUpForm />} />
 
-          <Route path="/sign-in" element={<SignInForm />} />
+          <Route path={pathes.enter} element={<SignInForm />} />
 
-          <Route path="/profile" element={<EditProfileForm />} />
+          <Route path={pathes.profile} element={<EditProfileForm />} />
 
-          <Route path="/add-article" element={<AddArticleForm />} />
+          <Route path={pathes.addArticle} element={<AddArticleForm />} />
 
-          <Route path="/articles/:slug/edit" element={<EditArticleForm />} />
+          <Route path={pathes.editArticle} element={<EditArticleForm />} />
         </Route>
       </Routes>
     </>
